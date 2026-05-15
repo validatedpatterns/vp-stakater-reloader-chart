@@ -2,8 +2,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=helm,vim,linux
 
 ### Helm ###
-# Chart dependencies
+# Chart dependencies (vendored subcharts are tracked for CI without registry pulls)
 **/charts/*.tgz
+!charts/reloader-*.tgz
 
 ### Linux ###
 *~

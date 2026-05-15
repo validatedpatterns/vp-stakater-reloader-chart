@@ -5,9 +5,53 @@
 
 {{ template "chart.description" . }}
 
-This chart is used to serve as the template for Validated Patterns Charts
+## Prerequisites
 
-## Notable changes
+- Helm 3 or later
+- OpenShift (or Kubernetes) cluster
+- Optional: [Secrets Store CSI Driver](https://secrets-store-csi-driver.sigs.k8s.io/) and its CRDs if you rely on CSI-backed secret rotation (Reloader watches those APIs when `reloader.reloader.enableCSIIntegration` is true)
+
+## Install
+
+Add this chart (or your chart repo) and install into a dedicated namespace, for example `reloader`:
+
+```bash
+helm install reloader /path/to/vp-stakater-reloader-chart \
+  --namespace reloader \
+  --create-namespace
+```
+
+### OpenShift UID / SCC (recommended)
+
+Upstream Reloader defaults `runAsUser: 65534`. On OpenShift 4.13+, Stakater recommends letting the namespace SCC assign the UID. Helm value merging keeps that default unless you clear the key explicitly:
+
+```bash
+helm install reloader /path/to/vp-stakater-reloader-chart \
+  --namespace reloader \
+  --create-namespace \
+  --set reloader.reloader.deployment.securityContext.runAsUser=null
+```
+
+### Maximum automation (`autoReloadAll`)
+
+This chart sets `reloader.reloader.autoReloadAll` to `false` so workloads opt in via Reloader annotations. To reload on ConfigMap/Secret changes by default (opt out with `reloader.stakater.com/auto: "false"` on a workload), set:
+
+```bash
+--set reloader.reloader.autoReloadAll=true
+```
+
+## Upstream documentation
+
+- [Reloader OSS documentation](https://docs.stakater.com/reloader/)
+- [Annotations reference](https://docs.stakater.com/reloader/1.4/reference/annotations.html)
+
+## Maintainer tasks
+
+Refresh the vendored subchart after editing `Chart.yaml` dependencies:
+
+```bash
+make helm-deps
+```
 
 {{ template "chart.homepageLine" . }}
 
