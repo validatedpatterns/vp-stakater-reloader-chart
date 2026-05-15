@@ -1,0 +1,7 @@
+# chart-testing (ct lint) defaults to chart-dirs: [charts]; this chart lives at repo root.
+chart-dirs:
+  - .
+# Helm repo *names* cannot contain '/'. Using an alias avoids ct deriving
+# "stakater.github.io/stakater-charts" from the index URL (invalid for helm repo add).
+chart-repos:
+  - stakater=https://stakater.github.io/stakater-charts

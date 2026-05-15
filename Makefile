@@ -16,6 +16,7 @@ help: ## This help message
 
 .PHONY: helm-deps
 helm-deps: ## Downloads subchart dependencies (updates Chart.lock and charts/*.tgz)
+	helm repo add stakater https://stakater.github.io/stakater-charts --force-update
 	helm dependency update
 
 .PHONY: helm-lint
