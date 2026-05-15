@@ -15,8 +15,8 @@ reloader:
     ignoreJobs: false
     # -- Exclude CronJobs from reload monitoring
     ignoreCronJobs: false
-    # -- Reload on ConfigMap or Secret changes by default; opt out per workload via Reloader annotations
-    autoReloadAll: false
+    # -- Reload on ConfigMap or Secret changes by default; opt out per workload with reloader.stakater.com/auto: "false"
+    autoReloadAll: true
     # -- Enable leader election for multiple replicas
     enableHA: true
     # -- Trigger rollouts when new ConfigMaps or Secrets appear

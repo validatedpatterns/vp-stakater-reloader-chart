@@ -6,37 +6,75 @@ Wrapper Helm chart for Stakater Reloader with defaults for cluster-wide OpenShif
 
 ## Prerequisites
 
-- Helm 3 or later
 - OpenShift (or Kubernetes) cluster
+- A [Validated Patterns](https://validatedpatterns.io/) deployment (for example [multicloud-gitops](https://github.com/validatedpatterns/multicloud-gitops)) with `clusterGroup` hub values, or Helm 3 if you install the chart directly
 - Optional: [Secrets Store CSI Driver](https://secrets-store-csi-driver.sigs.k8s.io/) and its CRDs if you rely on CSI-backed secret rotation (Reloader watches those APIs when `reloader.reloader.enableCSIIntegration` is true)
 
 ## Install
 
-Add this chart (or your chart repo) and install into a dedicated namespace, for example `reloader`:
+### Validated Patterns (`clusterGroup`)
 
-```bash
-helm install reloader /path/to/vp-stakater-reloader-chart \
-  --namespace reloader \
-  --create-namespace
+Declare a dedicated namespace and an Argo CD application in your hub (or site) values, alongside an `argoProject` that already exists in the same file. When this chart is published to the [Validated Patterns Helm charts](https://github.com/validatedpatterns/helm-charts) repository, reference it by chart name and a `0.1.*` version range (same style as other catalog charts in multicloud-gitops `values-hub.yaml`):
+
+```yaml
+clusterGroup:
+  namespaces:
+    vp-stakater-reloader:
+  argoProjects:
+    - hub
+    # ... other projects ...
+  applications:
+    vp-stakater-reloader:
+      name: vp-stakater-reloader
+      namespace: vp-stakater-reloader
+      argoProject: hub
+      chart: vp-stakater-reloader
+      chartVersion: 0.1.*
 ```
+
+Ensure `argoProjects` includes the `argoProject` you reference. To deploy from a Git source instead of the catalog, use `repoURL`, `chartVersion` (target revision), and `path` as in the upstream Reloader chart packaging workflows.
 
 ### OpenShift UID / SCC (recommended)
 
-Upstream Reloader defaults `runAsUser: 65534`. On OpenShift 4.13+, Stakater recommends letting the namespace SCC assign the UID. Helm value merging keeps that default unless you clear the key explicitly:
+Upstream Reloader defaults `runAsUser: 65534`. On OpenShift 4.13+, Stakater recommends letting the namespace SCC assign the UID. In a Validated Patterns application, use Helm overrides on the application entry (Helm value merging keeps the default unless you clear the key):
+
+```yaml
+    vp-stakater-reloader:
+      # ... name, namespace, argoProject, chart, chartVersion ...
+      overrides:
+        - name: reloader.reloader.deployment.securityContext.runAsUser
+          value: "null"
+```
+
+Standalone Helm equivalent:
 
 ```bash
-helm install reloader /path/to/vp-stakater-reloader-chart \
-  --namespace reloader \
+helm install vp-stakater-reloader /path/to/vp-stakater-reloader-chart \
+  --namespace vp-stakater-reloader \
   --create-namespace \
   --set reloader.reloader.deployment.securityContext.runAsUser=null
 ```
 
-### Maximum automation (`autoReloadAll`)
+### Annotation-only reloads (`autoReloadAll`)
 
-This chart sets `reloader.reloader.autoReloadAll` to `false` so workloads opt in via Reloader annotations. To reload on ConfigMap/Secret changes by default (opt out with `reloader.stakater.com/auto: "false"` on a workload), set:
+By default `reloader.reloader.autoReloadAll` is `true`, so Reloader rolls workloads on ConfigMap or Secret changes unless you opt a workload out with `reloader.stakater.com/auto: "false"`. To require explicit Reloader annotations on every workload instead, set:
+
+```yaml
+      overrides:
+        - name: reloader.reloader.autoReloadAll
+          value: "false"
+```
+
+Standalone Helm: `--set reloader.reloader.autoReloadAll=false`.
+
+### Direct Helm install
+
+If you are not using Validated Patterns, install from a clone or packaged chart:
 
 ```bash
---set reloader.reloader.autoReloadAll=true
+helm install vp-stakater-reloader /path/to/vp-stakater-reloader-chart \
+  --namespace vp-stakater-reloader \
+  --create-namespace
 ```
 
 ## Upstream documentation
@@ -74,7 +112,7 @@ make helm-deps
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| reloader.reloader.autoReloadAll | bool | `false` | Reload on ConfigMap or Secret changes by default; opt out per workload via Reloader annotations |
+| reloader.reloader.autoReloadAll | bool | `true` | Reload on ConfigMap or Secret changes by default; opt out per workload with reloader.stakater.com/auto: "false" |
 | reloader.reloader.deployment.replicas | int | `2` | Number of controller replicas (requires enableHA when greater than 1) |
 | reloader.reloader.deployment.securityContext.runAsNonRoot | bool | `true` | Run as non-root |
 | reloader.reloader.deployment.securityContext.seccompProfile.type | string | `"RuntimeDefault"` | Seccomp profile for the pod |
