@@ -4,7 +4,7 @@ description: >-
   Wrapper Helm chart for Stakater Reloader with defaults for cluster-wide
   OpenShift, ConfigMap/Secret watching, and Secrets Store CSI integration.
 type: application
-version: 0.1.1
+version: 0.1.2
 keywords:
   - reloader
   - openshift
@@ -20,4 +20,4 @@ maintainers:
 dependencies:
   - name: reloader
     version: 2.2.11
-    repository: "@stakater"
+    repository: https://stakater.github.io/stakater-charts
