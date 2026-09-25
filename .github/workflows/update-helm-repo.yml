@@ -22,47 +22,13 @@ permissions:
   contents: read
 
 jobs:
-  # Inlined from validatedpatterns/helm-charts helmlint.yml so we can register
-  # the Stakater repo before ct lint (reusable workflows cannot gain extra steps).
   helmlint:
-    name: Lint Charts
-    runs-on: ubuntu-latest
+    uses: validatedpatterns/helm-charts/.github/workflows/helmlint.yml@workflow-stable # zizmor: ignore[unpinned-uses]
     permissions:
       contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v4
-        with:
-          version: v3.12.2
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.9"
-          check-latest: true
-
-      - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.7.0
-
-      - name: Register Helm repo for Chart.yaml dependency (@stakater)
-        run: |
-          set -euo pipefail
-          helm repo add stakater https://stakater.github.io/stakater-charts --force-update
-
-      - name: Run chart-testing (lint)
-        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
-
-      - name: Run helm lint
-        run: helm lint .
 
   update-helm-repo:
     needs: [helmlint]
-    uses: validatedpatterns/helm-charts/.github/workflows/update-helm-repo.yml@69fd10ef9199eecd093fca715ae9765c78750efc # October 6, 2025
-    permissions:
-      contents: read
-    secrets:
-      CHARTS_REPOS_TOKEN: ${{ secrets.CHARTS_REPOS_TOKEN }}
+    uses: validatedpatterns/helm-charts/.github/workflows/update-helm-repo.yml@workflow-stable # zizmor: ignore[unpinned-uses]
+    permissions: read-all # zizmor: ignore[excessive-permissions]
+    secrets: inherit # zizmor: ignore[secrets-inherit]
