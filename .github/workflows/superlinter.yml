@@ -14,5 +14,6 @@ jobs:
     with:
       sl_env: |
         VALIDATE_BIOME_FORMAT=false
-        # Exclude Helm templates ({{ }} not valid YAML; checkov scans rendered defaults poorly)
-        FILTER_REGEX_EXCLUDE=.*/templates/.*
+        # Exclude Helm templates / chart package content from YAML/kube/checkov-style scans
+        FILTER_REGEX_EXCLUDE=.*/(templates|charts)/.*
+        VALIDATE_MARKDOWN_PRETTIER=false

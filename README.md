@@ -55,9 +55,9 @@ helm install vp-stakater-reloader /path/to/vp-stakater-reloader-chart \
 By default `reloader.reloader.autoReloadAll` is `true`, so Reloader rolls workloads on ConfigMap or Secret changes unless you opt a workload out with `reloader.stakater.com/auto: "false"`. To require explicit Reloader annotations on every workload instead, set:
 
 ```yaml
-      overrides:
-        - name: reloader.reloader.autoReloadAll
-          value: "false"
+overrides:
+  - name: reloader.reloader.autoReloadAll
+    value: "false"
 ```
 
 Standalone Helm: `--set reloader.reloader.autoReloadAll=false`.
@@ -89,38 +89,39 @@ make helm-deps
 
 ## Maintainers
 
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Validated Patterns |  |  |
+| Name               | Email | Url |
+| ------------------ | ----- | --- |
+| Validated Patterns |       |     |
 
 ## Source Code
 
-* <https://github.com/stakater/Reloader>
+- <https://github.com/stakater/Reloader>
 
 ## Requirements
 
-| Repository | Name | Version |
-|------------|------|---------|
-| https://stakater.github.io/stakater-charts | reloader | 2.2.11 |
+| Repository                                 | Name     | Version |
+| ------------------------------------------ | -------- | ------- |
+| https://stakater.github.io/stakater-charts | reloader | 2.2.11  |
 
 ## Values
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| reloader.reloader.autoReloadAll | bool | `true` | Reload on ConfigMap or Secret changes by default; opt out per workload with reloader.stakater.com/auto: "false" |
-| reloader.reloader.deployment.replicas | int | `2` | Number of controller replicas (requires enableHA when greater than 1) |
-| reloader.reloader.deployment.securityContext.runAsNonRoot | bool | `true` | Run as non-root |
-| reloader.reloader.deployment.securityContext.seccompProfile.type | string | `"RuntimeDefault"` | Seccomp profile for the pod |
-| reloader.reloader.enableCSIIntegration | bool | `true` | Watch Secrets Store CSI SecretProviderClass and SecretProviderClassPodStatus resources |
-| reloader.reloader.enableHA | bool | `true` | Enable leader election for multiple replicas |
-| reloader.reloader.ignoreConfigMaps | bool | `false` | Ignore ConfigMaps when true (cannot be true together with ignoreSecrets) |
-| reloader.reloader.ignoreCronJobs | bool | `false` | Exclude CronJobs from reload monitoring |
-| reloader.reloader.ignoreJobs | bool | `false` | Exclude Jobs from reload monitoring |
-| reloader.reloader.ignoreSecrets | bool | `false` | Ignore Secrets when true (cannot be true together with ignoreConfigMaps) |
-| reloader.reloader.isOpenshift | bool | `true` | Enable OpenShift DeploymentConfig RBAC when the API exists |
-| reloader.reloader.reloadOnCreate | bool | `true` | Trigger rollouts when new ConfigMaps or Secrets appear |
-| reloader.reloader.syncAfterRestart | bool | `true` | With HA, reconcile after leader restart (pairs with reloadOnCreate) |
-| reloader.reloader.watchGlobally | bool | `true` | Cluster-wide watch of all namespaces |
+| Key                                                              | Type   | Default            | Description                                                                                                     |
+| ---------------------------------------------------------------- | ------ | ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| reloader.reloader.autoReloadAll                                  | bool   | `true`             | Reload on ConfigMap or Secret changes by default; opt out per workload with reloader.stakater.com/auto: "false" |
+| reloader.reloader.deployment.replicas                            | int    | `2`                | Number of controller replicas (requires enableHA when greater than 1)                                           |
+| reloader.reloader.deployment.securityContext.runAsNonRoot        | bool   | `true`             | Run as non-root                                                                                                 |
+| reloader.reloader.deployment.securityContext.seccompProfile.type | string | `"RuntimeDefault"` | Seccomp profile for the pod                                                                                     |
+| reloader.reloader.enableCSIIntegration                           | bool   | `true`             | Watch Secrets Store CSI SecretProviderClass and SecretProviderClassPodStatus resources                          |
+| reloader.reloader.enableHA                                       | bool   | `true`             | Enable leader election for multiple replicas                                                                    |
+| reloader.reloader.ignoreConfigMaps                               | bool   | `false`            | Ignore ConfigMaps when true (cannot be true together with ignoreSecrets)                                        |
+| reloader.reloader.ignoreCronJobs                                 | bool   | `false`            | Exclude CronJobs from reload monitoring                                                                         |
+| reloader.reloader.ignoreJobs                                     | bool   | `false`            | Exclude Jobs from reload monitoring                                                                             |
+| reloader.reloader.ignoreSecrets                                  | bool   | `false`            | Ignore Secrets when true (cannot be true together with ignoreConfigMaps)                                        |
+| reloader.reloader.isOpenshift                                    | bool   | `true`             | Enable OpenShift DeploymentConfig RBAC when the API exists                                                      |
+| reloader.reloader.reloadOnCreate                                 | bool   | `true`             | Trigger rollouts when new ConfigMaps or Secrets appear                                                          |
+| reloader.reloader.syncAfterRestart                               | bool   | `true`             | With HA, reconcile after leader restart (pairs with reloadOnCreate)                                             |
+| reloader.reloader.watchGlobally                                  | bool   | `true`             | Cluster-wide watch of all namespaces                                                                            |
 
-----------------------------------------------
+---
+
 Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)
