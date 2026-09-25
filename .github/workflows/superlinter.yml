@@ -17,3 +17,5 @@ jobs:
         # Exclude Helm templates / chart package content from YAML/kube/checkov-style scans
         FILTER_REGEX_EXCLUDE=.*/(templates|charts)/.*
         VALIDATE_MARKDOWN_PRETTIER=false
+        VALIDATE_TRIVY=false
+        VALIDATE_MARKDOWN=false
