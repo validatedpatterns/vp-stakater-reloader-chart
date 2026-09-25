@@ -10,7 +10,9 @@ permissions:
 
 jobs:
   lint:
-    uses: validatedpatterns/github-actions-library/.github/workflows/superlinter.yml@v1
+    uses: validatedpatterns/github-actions-library/.github/workflows/superlinter.yml@v1 # zizmor: ignore[unpinned-uses]
     with:
       sl_env: |
         VALIDATE_BIOME_FORMAT=false
+        # Exclude Helm templates ({{ }} not valid YAML; checkov scans rendered defaults poorly)
+        FILTER_REGEX_EXCLUDE=.*/templates/.*
